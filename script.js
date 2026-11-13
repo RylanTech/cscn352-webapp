@@ -5,7 +5,12 @@ const CART_KEY = "pizza_cart";
 // Load cart from localStorage
 function getCart() {
   try {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    const cart = JSON.parse(localStorage.getItem(CART_KEY));
+    return Array.isArray(cart)
+      ? cart.filter(
+          (item) => item && Array.isArray(item.toppings) && item.toppings.length,
+        )
+      : [];
   } catch {
     return [];
   }
@@ -93,15 +98,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // For simplicity we take the first pizza only.
-      // You can extend this to support multiple pizzas later.
-      const pizza = cart[0];
-
       const payload = {
-        toppings: pizza.toppings,
-        creditCard: document.getElementById("creditCard").value.trim(),
+        pizzas: cart,
         address: document.getElementById("address").value.trim(),
       };
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      const errorEl = document.getElementById("checkoutError");
+      submitButton.disabled = true;
+      errorEl.style.display = "none";
 
       try {
         const res = await fetch("process_order.php", {
@@ -124,10 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
           form.style.display = "none";
           document.getElementById("cartSummary").style.display = "none";
         } else {
-          alert("Error: " + result.message);
+          errorEl.textContent = result.message || "Unable to place the order.";
+          errorEl.style.display = "block";
         }
       } catch (err) {
-        alert("Network error. Please try again.");
+        errorEl.textContent = "Network error. Please try again.";
+        errorEl.style.display = "block";
+      } finally {
+        submitButton.disabled = false;
       }
     });
   }

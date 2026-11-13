@@ -33,19 +33,16 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <form id="checkoutForm">
-            <h2>Payment & Delivery (Fake Data)</h2>
+            <h2>Delivery</h2>
 
-            <label for="creditCard">Fake Credit Card Number</label>
-            <input type="text" id="creditCard" name="creditCard" 
-                   placeholder="1234-5678-9012-3456" required maxlength="19">
-
-            <label for="address">Fake Delivery Address</label>
+            <label for="address">Delivery Address</label>
             <textarea id="address" name="address" rows="3" 
-                      placeholder="123 Fake Street, Example City, ST 12345" required></textarea>
+                      placeholder="123 Main Street, Example City" maxlength="1000" required></textarea>
 
             <button type="submit" class="primary">Submit Order</button>
         </form>
 
+        <div id="checkoutError" class="error" style="display:none;" role="alert"></div>
         <div id="successMessage" class="success" style="display:none;"></div>
     </div>
 
